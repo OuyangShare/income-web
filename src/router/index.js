@@ -6,19 +6,28 @@ const routes = [
     path: '/',
     component: Layout,
     children: [
-      { path: '/', redirect: '/web' },
-      { path: '/web', name: 'home', meta: { title: '首页' }, component: () => import('../views/home.vue') },
-      { path: '/web/commodity', name: 'commodity', meta: { title: '商品管理' }, component: () => import('../views/commodity/index.vue') },
-      { path: '/web/commodity/edit', name: 'commodityEdit', meta: { title: '商品编辑' }, component: () => import('../views/commodity/edit.vue') },
+      { path: '/', name: 'home', meta: { title: '首页' }, component: () => import('../views/home.vue') },
+      { path: '/commodity', name: 'commodity', meta: { title: '商品管理' }, component: () => import('../views/commodity/index.vue') },
+      { path: '/commodity/edit', name: 'commodityEdit', meta: { title: '商品编辑' }, component: () => import('../views/commodity/edit.vue') },
     ]
   },
-  { path: '/web/login', component: () => import('../views/login/index.vue') },
+  { path: '/login', component: () => import('../views/login/index.vue') },
   // 其他页面路由
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory('/web'),
   routes
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+  // 如果路径包含/web,则重定向到去掉/web的路径
+  if (to.path.startsWith('/web')) {
+    next(to.path.replace('/web', ''))
+  } else {
+    next()
+  }
 })
 
 export default router
