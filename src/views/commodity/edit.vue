@@ -54,7 +54,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-// import { API } from '@/common/api'
+import { API } from '@/common/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -109,13 +109,16 @@ const submitForm = async (formEl) => {
     })
 }
 
-onMounted(() => {
-    const id = route.query.id
-    if (id) {
-        isEdit.value = true
+onMounted(async () => {
+    const { pcode } = route.query
+    if (pcode) {
+        form.value.pcode = pcode
         // 这里可以调用获取商品详情的接口
-        // const res = await API.getProductDetail({ id })
-        // form.value = res.data
+        const res = await API.getDetaInfo({ code: pcode })
+        console.log(res)
+        if(res.code === 0) {
+            form.value = {...form.value, ...res.data}
+        }
     }
 })
 </script>

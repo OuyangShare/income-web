@@ -6,11 +6,11 @@
         
         <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" class="form-container">
             <el-form-item label="商品编号">
-                <el-input v-model="form.pcode" disabled />
+                {{ form.pcode }}
             </el-form-item>
 
             <el-form-item label="商品名称">
-                <el-input v-model="form.name" disabled />
+                {{ form.name }}
             </el-form-item>
 
             <el-form-item label="供应商">
@@ -88,7 +88,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { API } from '@/common/api'
-
+import { Plus } from '@element-plus/icons-vue'
 const router = useRouter()
 const route = useRoute()
 const formRef = ref(null)
@@ -106,27 +106,6 @@ const form = ref({
 })
 
 const rules = {
-    testReport: [
-        { required: true, message: '请上传检测报告', trigger: 'change' }
-    ],
-    instructions: [
-        { required: true, message: '请输入使用说明', trigger: 'blur' }
-    ],
-    dealer: [
-        { required: true, message: '请输入经销商信息', trigger: 'blur' }
-    ],
-    manufacturer: [
-        { required: true, message: '请输入生产商信息', trigger: 'blur' }
-    ],
-    logistics: [
-        { required: true, message: '请输入物流商信息', trigger: 'blur' }
-    ],
-    circulationInfo: [
-        { required: true, message: '请输入流通信息', trigger: 'blur' }
-    ],
-    companyProfile: [
-        { required: true, message: '请输入公司简介', trigger: 'blur' }
-    ]
 }
 
 const goBack = () => {
@@ -165,10 +144,11 @@ onMounted(async () => {
     if (pcode) {
         form.value.pcode = pcode
         // 这里可以调用获取商品详情的接口
-        // const res = await API.getProductDetail({ pcode })
-        // if(res.code === 0) {
-        //     form.value = {...form.value, ...res.data}
-        // }
+        const res = await API.getDetaInfo({ code: pcode })
+        console.log(res)
+        if(res.code === 0) {
+            form.value = {...form.value, ...res.data}
+        }
     }
 })
 </script>

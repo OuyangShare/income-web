@@ -81,7 +81,7 @@ onMounted(async () => {
     const { pcode } = route.query
     if (pcode) {
         // 调用获取商品详情接口
-        const res = await API.getProductDetail({ pcode })
+        const res = await API.getDetaInfo({ code: pcode })
         if(res.code === 0) {
             info.value = res.data
         } else {

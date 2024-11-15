@@ -52,20 +52,7 @@ const searchForm = ref({
     pageSize: 10,
 })
 const total = ref(0);
-const tableData = ref([
-    {
-        pcode: 1,
-        name: '商品1',
-        price: 99,
-        stock: 100
-    },
-    {
-        pcode: 2, 
-        name: '商品2',
-        price: 199,
-        stock: 50
-    }
-])
+const tableData = ref([])
 
 const handleSizeChange = (val) => {
     searchForm.value.pageSize = val
@@ -96,7 +83,7 @@ const getProductList = async () => {
     const res = await API.getProductList(searchForm.value);
     const data = res.data || {};    
     tableData.value = data.list || [];
-    tableData.value = [{name: '商品1', pcode: 1, price: 99}]
+    tableData.value = [{name: '商品1', pcode: "P180100922", price: 99}]
     total.value = data.total || 0;
     console.log(res)
 }
@@ -107,7 +94,7 @@ onMounted(() => {
 
 const handleAdd = (row) => {
     router.push({
-        path: '/web/commodity/edit',
+        path: '/commodity/edit',
         query: {
             pcode: row.pcode,
             type: 'add'
@@ -116,8 +103,10 @@ const handleAdd = (row) => {
 }
 
 const handleView = (row) => {
+    console.log(row.pcode);
+    
     router.push({
-        path: '/web/commodity/info',
+        path: '/commodity/info',
         query: {
             pcode: row.pcode,
         }
@@ -126,7 +115,7 @@ const handleView = (row) => {
 
 const handleImprove = (row) => {
     router.push({
-        path: '/web/commodity/improve',
+        path: '/commodity/improve',
         query: {
             pcode: row.pcode
         }
@@ -135,7 +124,7 @@ const handleImprove = (row) => {
 
 const handleEditDetail = (row) => {
     router.push({
-        path: '/web/commodity/edit',
+        path: '/commodity/edit',
         query: {
             pcode: row.pcode,
             type: 'edit'
