@@ -20,15 +20,6 @@
                 />
             </el-form-item>
             
-            <el-form-item label="商品库存" prop="stock">
-                <el-input-number
-                    v-model="form.stock"
-                    :min="0"
-                    :precision="0"
-                    placeholder="请输入商品库存"
-                />
-            </el-form-item>
-            
             <el-form-item label="商品描述" prop="description">
                 <el-input
                     v-model="form.description"
@@ -73,7 +64,6 @@ const isEdit = ref(false)
 const form = ref({
     name: '',
     price: 0,
-    stock: 0,
     description: '',
     imageUrl: ''
 })
@@ -85,9 +75,6 @@ const rules = {
     ],
     price: [
         { required: true, message: '请输入商品价格', trigger: 'blur' }
-    ],
-    stock: [
-        { required: true, message: '请输入商品库存', trigger: 'blur' }
     ]
 }
 
