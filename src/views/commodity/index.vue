@@ -12,13 +12,14 @@
             </div>
         </div>
         <el-table border :data="tableData" style="width: 100%">
-            <el-table-column prop="pcode" label="商品ID" width="180" />
-            <el-table-column prop="name" label="商品名称" width="180" />
+            <el-table-column prop="pcode" label="商品ID" />
+            <el-table-column prop="name" label="商品名称" />
             <el-table-column prop="price" label="价格" />
             <el-table-column label="操作" align="center">
                 <template #default="scope">
                     <el-button size="small" type="primary" link @click="handleView(scope.row)">查看</el-button>
                     <el-button size="small" type="primary" link @click="handleEditDetail(scope.row)">编辑</el-button>
+                    <el-button size="small" type="primary" link @click="handleEditDetail(scope.row)">补充材料</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -28,7 +29,7 @@
                 v-model:current-page="searchForm.page"
                 v-model:page-size="searchForm.pageSize"
                 :page-sizes="[10, 20, 50]"
-                :total="tableData.length"
+                :total="total"
                 layout="total, sizes, prev, pager, next"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
@@ -48,8 +49,9 @@ const searchForm = ref({
     name: '',
     pcode: '',
     page: 1,
-    pageSize: 100,
+    pageSize: 10,
 })
+const total = ref(0);
 const tableData = ref([
     {
         pcode: 1,
@@ -91,7 +93,11 @@ const handleSearch = () => {
 }
 
 const getProductList = async () => {
-    const res = await API.getProductList(searchForm.value)
+    const res = await API.getProductList(searchForm.value);
+    const data = res.data || {};    
+    tableData.value = data.list || [];
+    tableData.value = [{name: '商品1', pcode: 1, price: 99}]
+    total.value = data.total || 0;
     console.log(res)
 }
 
@@ -128,7 +134,6 @@ const handleEditDetail = (row) => {
     })
 }
 </script>
-
 <style lang="scss" scoped>
 .commodity-page {
     padding: 20px;
@@ -136,23 +141,17 @@ const handleEditDetail = (row) => {
     .header {
         margin-bottom: 20px;
     }
-}
 
-.operation-area {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
-}
+    .operation-area {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
 
-.pagination-container {
-    margin-top: 20px;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.dialog-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
+    .pagination-container {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+    }
 }
 </style>

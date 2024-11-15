@@ -2,12 +2,13 @@
 import axios from 'axios';
 
 // axios.defaults.baseURL = 'https://api.example.com';
-axios.defaults.baseURL = '';
+axios.defaults.baseURL = 'http://8.153.68.28:8090';
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token') || '';
     // 为每个请求添加认证头
-    config.headers['Authorization'] = 'Bearer YOUR_TOKEN';
+    config.headers['token'] = token;
     config.headers["Content-Type"] = 'application/json;charset=UTF-8'
     config.headers["Access-Control-Allow-Origin"] = '*'
     return config;
@@ -43,8 +44,8 @@ export function request(url = '', params = {}, data = {}, type = 'POST') {
                 url: url,
                 params,
                 data: data
-            }).then(res => {
-                resolve(res)
+            }).then(res => {                
+                resolve(res.data)
             }).catch(err => {
                 resolve({
                     data: {

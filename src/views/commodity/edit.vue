@@ -10,7 +10,7 @@
                 <el-input v-model="form.name" placeholder="请输入商品名称" />
             </el-form-item>
             
-            <el-form-item label="商品价格" prop="price">
+            <el-form-item label="商品建议零售价" prop="price">
                 <el-input-number 
                     v-model="form.price"
                     :precision="2"
@@ -20,12 +20,12 @@
                 />
             </el-form-item>
             
-            <el-form-item label="商品描述" prop="description">
+            <el-form-item label="商品简介" prop="description">
                 <el-input
                     v-model="form.description"
                     type="textarea"
                     rows="4"
-                    placeholder="请输入商品描述"
+                    placeholder="请输入商品简介"
                 />
             </el-form-item>
             
@@ -40,7 +40,7 @@
                     <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
                 </el-upload>
             </el-form-item>
-            
+
             <el-form-item>
                 <el-button type="primary" @click="submitForm(formRef)">保存</el-button>
                 <el-button @click="goBack">取消</el-button>
@@ -122,8 +122,8 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .edit-page {
-    padding: 20px;
-    
+    padding: 15px;
+    background-color: #ffffff;
     .header {
         margin-bottom: 30px;
     }
@@ -150,15 +150,15 @@ onMounted(() => {
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
-        width: 178px;
-        height: 178px;
+        width: 120px;
+        height: 120px;
         text-align: center;
-        line-height: 178px;
+        line-height: 120px;
     }
     
     .avatar {
-        width: 178px;
-        height: 178px;
+        width: 120px;
+        height: 120px;
         display: block;
     }
 }

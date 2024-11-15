@@ -1,6 +1,6 @@
 import { request } from './request'
 
-const public_url = '8.153.68.28:8090'
+const public_url = ''
 
 export class API {
     static async getDetaInfo(params, data) {
