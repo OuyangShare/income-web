@@ -9,6 +9,8 @@ const routes = [
       { path: '/', name: 'home', meta: { title: '首页' }, component: () => import('../views/home.vue') },
       { path: '/commodity', name: 'commodity', meta: { title: '商品管理' }, component: () => import('../views/commodity/index.vue') },
       { path: '/commodity/edit', name: 'commodityEdit', meta: { title: '商品编辑' }, component: () => import('../views/commodity/edit.vue') },
+      { path: '/commodity/improve', name: 'commodityImprove', meta: { title: '补充材料' }, component: () => import('../views/commodity/improve.vue') },
+      { path: '/commodity/info', name: 'commodityInfo', meta: { title: '商品详情' }, component: () => import('../views/commodity/info.vue') },
     ]
   },
   { path: '/login', component: () => import('../views/login/index.vue') },

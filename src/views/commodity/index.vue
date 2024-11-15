@@ -17,9 +17,9 @@
             <el-table-column prop="price" label="价格" />
             <el-table-column label="操作" align="center">
                 <template #default="scope">
-                    <el-button size="small" type="primary" link @click="handleView(scope.row)">查看</el-button>
+                    <el-button size="small" type="primary" link @click="handleView(scope.row)">查看详情</el-button>
                     <el-button size="small" type="primary" link @click="handleEditDetail(scope.row)">编辑</el-button>
-                    <el-button size="small" type="primary" link @click="handleEditDetail(scope.row)">补充材料</el-button>
+                    <el-button size="small" type="primary" link @click="handleImprove(scope.row)">补充材料</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -117,10 +117,18 @@ const handleAdd = (row) => {
 
 const handleView = (row) => {
     router.push({
-        path: '/web/commodity/edit',
+        path: '/web/commodity/info',
         query: {
             pcode: row.pcode,
-            type: 'view'
+        }
+    })
+}
+
+const handleImprove = (row) => {
+    router.push({
+        path: '/web/commodity/improve',
+        query: {
+            pcode: row.pcode
         }
     })
 }
@@ -129,7 +137,8 @@ const handleEditDetail = (row) => {
     router.push({
         path: '/web/commodity/edit',
         query: {
-            pcode: row.pcode
+            pcode: row.pcode,
+            type: 'edit'
         }
     })
 }
