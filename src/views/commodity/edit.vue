@@ -54,7 +54,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
-import { API } from '@/common/api'
+// import { API } from '@/common/api'
 
 const router = useRouter()
 const route = useRoute()

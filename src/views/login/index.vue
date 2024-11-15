@@ -56,7 +56,7 @@ const submitLogin = () => {
     } else {
         ElMessage.success('登录成功');
         setTimeout(() => {
-            router.push('/commodity');
+            router.push('/web/commodity');
         }, 1500);
     }
 }

@@ -19,7 +19,7 @@
                     <span>首页</span>
                 </el-menu-item>
                 
-                <el-menu-item index="/commodity">
+                <el-menu-item index="/web/commodity">
                     <el-icon><Goods /></el-icon>
                     <span>商品管理</span>
                 </el-menu-item>
@@ -86,7 +86,7 @@ const breadcrumbList = computed(() => {
 })
 
 const handleLogout = () => {
-    router.push('/login')
+    router.push('/web/login')
 }
 </script>
 
