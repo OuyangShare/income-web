@@ -12,7 +12,13 @@ axios.interceptors.request.use((config) => {
     config.headers["Access-Control-Allow-Origin"] = '*'
     return config;
 }, (error) => {
-    return Promise.reject(error);
+    console.error('请求错误:', error);
+    return Promise.resolve({
+        data: {
+            code: -1,
+            msg: '请求发送失败'
+        }
+    });
 });
 
 // 响应拦截器
@@ -20,14 +26,19 @@ axios.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     console.error('响应错误:', error.response);
-    return Promise.reject(error);
+    return Promise.resolve({
+        data: {
+            code: -1,
+            msg: error.response?.data?.message || '请求失败'
+        }
+    });
 });
 
 export function request(url = '', params = {}, data = {}, type = 'POST') {
     //设置 url params type 的默认值
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         try {
-            return axios({
+            axios({
                 method: type,
                 url: url,
                 params,
@@ -35,10 +46,20 @@ export function request(url = '', params = {}, data = {}, type = 'POST') {
             }).then(res => {
                 resolve(res)
             }).catch(err => {
-                reject(err)
+                resolve({
+                    data: {
+                        code: -1,
+                        msg: err.message || '请求失败'
+                    }
+                })
             })
         } catch (error) {
-            reject(error)
+            resolve({
+                data: {
+                    code: -1,
+                    msg: error.message || '请求失败'
+                }
+            })
         }
     })
 }
