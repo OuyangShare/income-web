@@ -20,23 +20,25 @@
                 />
             </el-form-item>
             
-            <el-form-item label="商品简介" prop="description">
+            <el-form-item label="商品简介" prop="storagemethod">
                 <el-input
-                    v-model="form.description"
+                    v-model="form.storagemethod"
                     type="textarea"
-                    rows="4"
+                    :rows="4"
                     placeholder="请输入商品简介"
                 />
             </el-form-item>
             
-            <el-form-item label="商品图片">
+            <el-form-item label="商品图片" prop="banner">
                 <el-upload
                     class="avatar-uploader"
-                    action="#"
+                    action="/upfile/upImage"
                     :show-file-list="false"
                     :before-upload="beforeAvatarUpload"
+                    :on-success="handleAvatarSuccess"
+                    :on-remove="handleRemove"
                 >
-                    <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar" />
+                    <img v-if="form.banner" :src="form.banner" class="avatar" />
                     <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
                 </el-upload>
             </el-form-item>
@@ -62,10 +64,11 @@ const formRef = ref(null)
 
 const isEdit = ref(false)
 const form = ref({
+    pcode: '',
     name: '',
     price: 0,
-    description: '',
-    imageUrl: ''
+    storagemethod: '',
+    banner: []
 })
 
 const rules = {
@@ -80,6 +83,10 @@ const rules = {
 
 const goBack = () => {
     router.back()
+}
+
+const handleRemove = () => {
+    form.value.banner = [];
 }
 
 const beforeAvatarUpload = (file) => {
@@ -98,13 +105,21 @@ const beforeAvatarUpload = (file) => {
     return true
 }
 
+const handleAvatarSuccess = (res) => {
+    console.log(res)
+    // form.value.imageUrl = res.data.url
+}
+
 const submitForm = async (formEl) => {
     if (!formEl) return
     
-    await formEl.validate((valid) => {
+    await formEl.validate(async (valid) => {
         if (valid) {
-            ElMessage.success(isEdit.value ? '修改成功' : '添加成功')
-            goBack()
+            const res = await API.addCommodity(form.value)
+            if(res.code === 0) {
+                ElMessage.success(isEdit.value ? '修改成功' : '添加成功')
+                goBack()
+            }
         }
     })
 }
@@ -112,7 +127,8 @@ const submitForm = async (formEl) => {
 onMounted(async () => {
     const { pcode } = route.query
     if (pcode) {
-        form.value.pcode = pcode
+        form.value.pcode = pcode;
+        isEdit.value = true
         // 这里可以调用获取商品详情的接口
         const res = await API.getDetaInfo({ code: pcode })
         console.log(res)

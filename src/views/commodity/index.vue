@@ -94,11 +94,7 @@ onMounted(() => {
 
 const handleAdd = (row) => {
     router.push({
-        path: '/commodity/edit',
-        query: {
-            pcode: row.pcode,
-            type: 'add'
-        }
+        path: '/commodity/add'
     })
 }
 
@@ -127,7 +123,6 @@ const handleEditDetail = (row) => {
         path: '/commodity/edit',
         query: {
             pcode: row.pcode,
-            type: 'edit'
         }
     })
 }

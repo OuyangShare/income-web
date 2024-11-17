@@ -1,5 +1,6 @@
 // main.js
 import axios from 'axios';
+import router from '@/router';
 
 // axios.defaults.baseURL = 'https://api.example.com';
 axios.defaults.baseURL = 'http://8.153.68.28:8090';
@@ -24,9 +25,16 @@ axios.interceptors.request.use((config) => {
 
 // 响应拦截器
 axios.interceptors.response.use((response) => {
+    if (response.data.code === 401) {
+        router.replace('/login');
+        return Promise.reject(response.data);
+    }
     return response;
 }, (error) => {
     console.error('响应错误:', error.response);
+    if (error.response?.data?.code === 401) {
+        router.replace('/login');
+    }
     return Promise.resolve({
         data: {
             code: -1,
@@ -44,9 +52,17 @@ export function request(url = '', params = {}, data = {}, type = 'POST') {
                 url: url,
                 params,
                 data: data
-            }).then(res => {                
+            }).then(res => {
+                if (res.data.code === 401) {
+                    router.push('/login');
+                    return;
+                }
                 resolve(res.data)
             }).catch(err => {
+                if (err.code === 401) {
+                    router.replace('/login');
+                    return;
+                }
                 resolve({
                     data: {
                         code: -1,
