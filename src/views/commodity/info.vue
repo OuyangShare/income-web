@@ -25,7 +25,20 @@
                     </template>
                     {{ info?.storagemethod || '暂无' }}
                 </el-descriptions-item>
-
+                <el-descriptions-item>
+                    <template #label>
+                        <strong style="color: #000">商品图片</strong>
+                    </template>
+                    <el-image
+                        v-for="item in info?.bannerList"
+                        :key="item.id"
+                        :src="item.bannerimage"
+                        :preview-src-list="[item.bannerimage]"
+                        fit="cover"
+                        class="product-image"
+                        style="width: 120px; height: 120px;margin-right: 10px;"
+                    />
+                </el-descriptions-item>
                 <el-descriptions-item>
                     <template #label>
                         <strong style="color: #000">供应商</strong>
@@ -42,8 +55,10 @@
                         :key="item.id"
                         :src="item.origincertify"
                         :preview-src-list="[item.origincertify]"
+                        v-show="item.origincertify"
                         fit="cover"
                         class="report-image"
+                        style="width: 120px; height: 120px;margin-right: 10px;"
                     />
                 </el-descriptions-item>
 
