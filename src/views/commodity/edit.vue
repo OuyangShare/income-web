@@ -105,14 +105,8 @@ const handleRemoveImage = (index) => {
 const beforeAvatarUpload = (file) => {
     const isJPG = file.type === 'image/jpeg'
     const isPNG = file.type === 'image/png'
-    const isLt2M = file.size / 1024 / 1024 < 2
-
     if (!isJPG && !isPNG) {
-        ElMessage.error('上传头像图片只能是 JPG/PNG 格式!')
-        return false
-    }
-    if (!isLt2M) {
-        ElMessage.error('上传头像图片大小不能超过 2MB!')
+        ElMessage.error('上传图片只能是 JPG/PNG 格式!')
         return false
     }
     return true
@@ -136,7 +130,7 @@ const submitForm = async (formEl) => {
         if (valid) {
             const params = {
                 product: {
-                    pcode: form.value.pcode,
+                    pcode: form.value.pcode || '',
                     name: form.value.name,
                     price: form.value.price,
                     storagemethod: form.value.storagemethod
@@ -157,7 +151,6 @@ onMounted(async () => {
     if (pcode) {
         form.value.pcode = pcode
         isEdit.value = true
-        // 这里可以调用获取商品详情的接口
         const res = await API.getDetaInfo({ code: pcode })
         console.log(res)
         if (res.errcode === 0) {
