@@ -28,14 +28,16 @@
                 />
             </el-form-item>
 
-            <el-form-item label="商品图片" prop="banner" class="banner-item">
-                <template v-if="form.banner.length > 0">
+            <el-form-item label="商品图片" prop="bannerList" class="banner-item">
+                <template v-if="form.bannerList.length > 0">
                     <el-upload
-                        v-for="item in form.banner"
+                        v-for="item in form.bannerList"
                         :key="item.id"
                         v-model:file-list="fileList"
                         class="avatar-uploader"
-                        action="/upfile/upImage"
+                        action="#"
+                        auto-upload="false"
+                        :http-request="uploadFile"
                         :show-file-list="false"
                         :before-upload="beforeAvatarUpload"
                         :on-success="handleAvatarSuccess"
@@ -46,8 +48,9 @@
                 </template>
                 <el-upload
                     class="avatar-uploader"
-                    action="/upfile/upImage"
+                    action="#"
                     :show-file-list="false"
+                    :http-request="uploadFile"
                     :before-upload="beforeAvatarUpload"
                     :on-success="handleAvatarSuccess"
                     :on-remove="handleRemove"
@@ -83,7 +86,7 @@ const form = ref({
     name: '',
     price: 0,
     storagemethod: '',
-    banner: []
+    bannerList: []
 })
 
 const rules = {
@@ -101,7 +104,7 @@ const goBack = () => {
 }
 
 const handleRemove = () => {
-    form.value.banner = []
+    form.value.bannerList = []
 }
 
 const beforeAvatarUpload = (file) => {
@@ -120,6 +123,17 @@ const beforeAvatarUpload = (file) => {
     return true
 }
 
+const uploadFile = async (file) => {
+    const res = await API.uploadImage({}, {file: file.file})
+    if (res.errcode === 0) {
+        const url = res.data;
+        form.value.bannerList.push({
+            bannerimage: url,
+            id: ''
+        })
+    }    
+}
+
 const handleAvatarSuccess = (res) => {
     console.log(res)
     // form.value.imageUrl = res.data.url
@@ -130,7 +144,16 @@ const submitForm = async (formEl) => {
 
     await formEl.validate(async (valid) => {
         if (valid) {
-            const res = await API.addOrUpdateProperty({}, form.value)
+            const params = {
+                product: {
+                    pcode: form.value.pcode,
+                    name: form.value.name,
+                    price: form.value.price,
+                    storagemethod: form.value.storagemethod
+                },
+                banner: form.value.bannerList
+            }
+            const res = await API.addProduct({}, params)
             if (res.errcode === 0) {
                 ElMessage.success(isEdit.value ? '修改成功' : '添加成功')
                 goBack()
@@ -149,7 +172,6 @@ onMounted(async () => {
         console.log(res)
         if (res.errcode === 0) {
             form.value = { ...form.value, ...res.data }
-            form.value.banner = res.data.bannerList || []
         }
     }
 })
@@ -187,9 +209,10 @@ onMounted(async () => {
                 border-color: var(--el-color-primary);
             }
         }
-        :deep(.avatar-uploader) {
-            margin-right: 10px;
-        }
+    }
+
+    :deep(.avatar-uploader) {
+        margin-right: 10px;
     }
 
     .avatar-uploader-icon {

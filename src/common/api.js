@@ -1,4 +1,4 @@
-import { request } from './request'
+import { request, uploadRequest } from './request'
 
 const public_url = ''
 
@@ -17,9 +17,9 @@ export class API {
     }
     // 上传图片
     static async uploadImage(params, data) {
-        return request(public_url + '/upfile/upImage', params, data, 'post')
+        return uploadRequest(public_url + '/upfile/upImage', params, data, 'post')
     }
-    // 新增编辑其他信息
+    // 新增编辑其商品的其他信息
     static async addOrUpdateProperty(params, data) {
         return request(public_url + '/product/addAndUpdateProperty', params, data, 'post')
     }

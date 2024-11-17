@@ -51,7 +51,7 @@ export function request(url = '', params = {}, data = {}, type = 'POST') {
                 method: type,
                 url: url,
                 params,
-                data: data
+                data: data,
             }).then(res => {
                 if (res.data.code === 401) {
                     router.push('/login');
@@ -75,6 +75,52 @@ export function request(url = '', params = {}, data = {}, type = 'POST') {
                 data: {
                     code: -1,
                     msg: error.message || '请求失败'
+                }
+            })
+        }
+    })
+}
+
+// 创建文件上传专用的axios实例
+const uploadService = axios.create({
+    timeout: 30000,
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    }
+});
+
+// 文件上传方法
+export function uploadRequest(url = '', params = {}, data = {}, type = 'POST') {
+    return new Promise((resolve) => {
+        try {
+            uploadService({
+                method: type,
+                url: url,
+                params,
+                data: data,
+            }).then(res => {
+                if (res.data.code === 401) {
+                    router.push('/login');
+                    return;
+                }
+                resolve(res.data)
+            }).catch(err => {
+                if (err.code === 401) {
+                    router.replace('/login');
+                    return;
+                }
+                resolve({
+                    data: {
+                        code: -1,
+                        msg: err.message || '上传失败'
+                    }
+                })
+            })
+        } catch (error) {
+            resolve({
+                data: {
+                    code: -1,
+                    msg: error.message || '上传失败'
                 }
             })
         }
