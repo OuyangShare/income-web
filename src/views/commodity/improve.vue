@@ -16,23 +16,30 @@
             <el-form-item label="供应商">
                 <el-input v-model="form.supplier" />
             </el-form-item>
-
-            <el-form-item label="检测报告" prop="testReport">
-                <el-upload
-                    class="upload-demo"
-                    action="#"
-                    :http-request="uploadTestReport"
-                    :limit="2"
-                    :show-file-list="true"
-                    accept="image/*"
-                    list-type="picture-card"
-                >
-                    <el-icon><Plus /></el-icon>
-                    <template #tip>
-                        <div class="el-upload__tip">
-                            只能上传jpg/png格式图片,最多上传2张
+            <el-form-item label="检测报告" prop="testReport" class="test-report-container">
+                <template v-if="form.testReport.length > 0">
+                    <div v-for="(item, index) in form.testReport" :key="index" class="image-item">
+                        <el-image 
+                            :src="item" 
+                            class="avatar"
+                            :preview-src-list="[item]"
+                            fit="cover"
+                        />
+                        <div class="image-actions">
+                            <el-button type="danger" link @click="handleRemoveImage(index)">
+                                <el-icon><Delete /></el-icon>
+                            </el-button>
                         </div>
-                    </template>
+                    </div>
+                </template>
+                <el-upload
+                    v-if="form.testReport.length < 2"
+                    class="avatar-uploader"
+                    action="#"
+                    :show-file-list="false"
+                    :http-request="uploadFile"
+                >
+                    <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
                 </el-upload>
             </el-form-item>
 
@@ -40,7 +47,7 @@
                 <el-input
                     v-model="form.instructions"
                     type="textarea"
-                    rows="4"
+                    :rows="4"
                     placeholder="请输入使用说明"
                 />
             </el-form-item>
@@ -70,7 +77,7 @@
                 <el-input
                     v-model="form.companyProfile"
                     type="textarea"
-                    rows="4"
+                    :rows="6"
                     placeholder="请输入公司简介"
                 />
             </el-form-item>
@@ -88,7 +95,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { API } from '@/common/api'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
+
 const router = useRouter()
 const route = useRoute()
 const formRef = ref(null)
@@ -96,13 +104,13 @@ const formRef = ref(null)
 const form = ref({
     pcode: '',
     name: '',
-    testReport: '',
+    supplier: '',
+    testReport: [],
     instructions: '',
     dealer: '',
     manufacturer: '',
     logistics: '',
-    circulationInfo: '',
-    companyProfile: ''
+    companyProfile: '',
 })
 
 const rules = {
@@ -112,15 +120,16 @@ const goBack = () => {
     router.back()
 }
 
-const uploadTestReport = async (params) => {
-    // 这里处理文件上传逻辑
-    const formData = new FormData()
-    formData.append('file', params.file)
-    // const res = await API.uploadFile(formData)
-    // if(res.code === 0) {
-    //     form.value.testReport = res.data.url
-    //     ElMessage.success('上传成功')
-    // }
+const handleRemoveImage = (index) => {
+    form.value.testReport.splice(index, 1)
+}
+
+const uploadFile = async (file) => {
+    const res = await API.uploadImage({}, {file: file.file})
+    if (res.errcode === 0) {
+        const url = res.data;
+        form.value.testReport.push(url)
+    }    
 }
 
 const submitForm = async (formEl) => {
@@ -139,15 +148,23 @@ const submitForm = async (formEl) => {
     })
 }
 
+const originObj = ref({});
+
 onMounted(async () => {
     const { pcode } = route.query
     if (pcode) {
         form.value.pcode = pcode
-        // 这里可以调用获取商品详情的接口
         const res = await API.getDetaInfo({ code: pcode })
-        console.log(res)
-        if(res.code === 0) {
-            form.value = {...form.value, ...res.data}
+        if(res.errcode === 0) {
+            const data = res.data || {};
+            originObj.value = data;
+            form.value = {...form.value, ...data}
+            form.value.supplier = data.internetProduction?.[0]?.producername || ''
+            form.value.testReport = Array.from(data.internetProduction, x=>x.origincertify);
+            form.value.dealer = data?.logisticsinfos?.[0]?.dealername || '';
+            form.value.manufacturer = data?.logisticsinfos?.[0]?.cusname || '';
+            form.value.logistics = data?.logisticsinfos?.[0]?.logisticsname || '';
+            form.value.companyProfile = data?.customs?.[0]?.cuscode || '';
         }
     }
 })
@@ -165,5 +182,69 @@ onMounted(async () => {
     .form-container {
         max-width: 800px;
     }
+
+    .test-report-container {
+        :deep(.el-form-item__content) {
+            line-height: normal;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    }
+
+    .image-item {
+        position: relative;
+        width: 120px;
+        height: 120px;
+
+        &:hover .image-actions {
+            display: block;
+        }
+
+        .image-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: none;
+            background: rgba(0,0,0,0.6);
+            border-radius: 0 6px 0 6px;
+            
+            .el-button {
+                padding: 4px 8px;
+                color: #fff;
+            }
+        }
+    }
+
+    .avatar-uploader {
+        :deep(.el-upload) {
+            border: 1px dashed #d9d9d9;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: var(--el-transition-duration-fast);
+
+            &:hover {
+                border-color: var(--el-color-primary);
+            }
+        }
+    }
+
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #8c939d;
+        width: 120px;
+        height: 120px;
+        text-align: center;
+        line-height: 120px;
+    }
+
+    .avatar {
+        width: 120px;
+        height: 120px;
+        display: block;
+    }
+
 }
 </style>

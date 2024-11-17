@@ -30,30 +30,27 @@
 
             <el-form-item label="商品图片" prop="bannerList" class="banner-item">
                 <template v-if="form.bannerList.length > 0">
-                    <el-upload
-                        v-for="item in form.bannerList"
-                        :key="item.id"
-                        v-model:file-list="fileList"
-                        class="avatar-uploader"
-                        action="#"
-                        auto-upload="false"
-                        :http-request="uploadFile"
-                        :show-file-list="false"
-                        :before-upload="beforeAvatarUpload"
-                        :on-success="handleAvatarSuccess"
-                        :on-remove="handleRemove"
-                    >
-                        <img :src="item.bannerimage" class="avatar" />
-                    </el-upload>
+                    <div v-for="(item, index) in form.bannerList" :key="item.id" class="image-item">
+                        <el-image 
+                            :src="item.bannerimage" 
+                            class="avatar"
+                            :preview-src-list="[item.bannerimage]"
+                            fit="cover"
+                        />
+                        <div class="image-actions">
+                            <el-button type="danger" link @click="handleRemoveImage(index)">
+                                <el-icon><Delete /></el-icon>
+                            </el-button>
+                        </div>
+                    </div>
                 </template>
                 <el-upload
+                    v-if="form.bannerList.length < 5"
                     class="avatar-uploader"
                     action="#"
                     :show-file-list="false"
                     :http-request="uploadFile"
                     :before-upload="beforeAvatarUpload"
-                    :on-success="handleAvatarSuccess"
-                    :on-remove="handleRemove"
                 >
                     <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
                 </el-upload>
@@ -71,14 +68,12 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Plus } from '@element-plus/icons-vue'
+import { Plus, Delete } from '@element-plus/icons-vue'
 import { API } from '@/common/api'
 
 const router = useRouter()
 const route = useRoute()
 const formRef = ref(null)
-
-const fileList = ref([])
 
 const isEdit = ref(false)
 const form = ref({
@@ -103,8 +98,8 @@ const goBack = () => {
     router.back()
 }
 
-const handleRemove = () => {
-    form.value.bannerList = []
+const handleRemoveImage = (index) => {
+    form.value.bannerList.splice(index, 1)
 }
 
 const beforeAvatarUpload = (file) => {
@@ -132,11 +127,6 @@ const uploadFile = async (file) => {
             id: ''
         })
     }    
-}
-
-const handleAvatarSuccess = (res) => {
-    console.log(res)
-    // form.value.imageUrl = res.data.url
 }
 
 const submitForm = async (formEl) => {
@@ -193,6 +183,33 @@ onMounted(async () => {
     .banner-item {
         :deep(.el-form-item__content) {
             line-height: normal;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+    }
+
+    .image-item {
+        position: relative;
+        width: 120px;
+        height: 120px;
+
+        .image-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: none;
+            background: rgba(0,0,0,0.6);
+            border-radius: 0 6px 0 6px;
+            
+            .el-button {
+                padding: 4px 8px;
+                color: #fff;
+            }
+        }
+
+        &:hover .image-actions {
+            display: block;
         }
     }
 
@@ -209,10 +226,6 @@ onMounted(async () => {
                 border-color: var(--el-color-primary);
             }
         }
-    }
-
-    :deep(.avatar-uploader) {
-        margin-right: 10px;
     }
 
     .avatar-uploader-icon {

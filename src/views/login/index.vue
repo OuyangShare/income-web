@@ -43,7 +43,7 @@ import { ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { Lock, User, Hide, View } from '@element-plus/icons-vue'
-import API from '@/common/request'
+import { API } from '@/common/api'
 
 const router = useRouter()
 const formData = ref({
