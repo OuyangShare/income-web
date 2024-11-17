@@ -1,17 +1,16 @@
-
 <template>
     <div class="edit-page">
         <div class="header">
             <el-page-header @back="goBack" :title="isEdit ? '编辑商品' : '新增商品'" />
         </div>
-        
+
         <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" class="form-container">
             <el-form-item label="商品名称" prop="name">
                 <el-input v-model="form.name" placeholder="请输入商品名称" />
             </el-form-item>
-            
+
             <el-form-item label="商品建议零售价" prop="price">
-                <el-input-number 
+                <el-input-number
                     v-model="form.price"
                     :precision="2"
                     :step="0.1"
@@ -19,7 +18,7 @@
                     placeholder="请输入商品价格"
                 />
             </el-form-item>
-            
+
             <el-form-item label="商品简介" prop="storagemethod">
                 <el-input
                     v-model="form.storagemethod"
@@ -28,8 +27,23 @@
                     placeholder="请输入商品简介"
                 />
             </el-form-item>
-            
-            <el-form-item label="商品图片" prop="banner">
+
+            <el-form-item label="商品图片" prop="banner" class="banner-item">
+                <template v-if="form.banner.length > 0">
+                    <el-upload
+                        v-for="item in form.banner"
+                        :key="item.id"
+                        v-model:file-list="fileList"
+                        class="avatar-uploader"
+                        action="/upfile/upImage"
+                        :show-file-list="false"
+                        :before-upload="beforeAvatarUpload"
+                        :on-success="handleAvatarSuccess"
+                        :on-remove="handleRemove"
+                    >
+                        <img :src="item.bannerimage" class="avatar" />
+                    </el-upload>
+                </template>
                 <el-upload
                     class="avatar-uploader"
                     action="/upfile/upImage"
@@ -38,8 +52,7 @@
                     :on-success="handleAvatarSuccess"
                     :on-remove="handleRemove"
                 >
-                    <img v-if="form.banner" :src="form.banner" class="avatar" />
-                    <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+                    <el-icon class="avatar-uploader-icon"><Plus /></el-icon>
                 </el-upload>
             </el-form-item>
 
@@ -51,7 +64,7 @@
     </div>
 </template>
 
-<script setup>
+<script lang="js" setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
@@ -61,6 +74,8 @@ import { API } from '@/common/api'
 const router = useRouter()
 const route = useRoute()
 const formRef = ref(null)
+
+const fileList = ref([])
 
 const isEdit = ref(false)
 const form = ref({
@@ -86,7 +101,7 @@ const goBack = () => {
 }
 
 const handleRemove = () => {
-    form.value.banner = [];
+    form.value.banner = []
 }
 
 const beforeAvatarUpload = (file) => {
@@ -112,11 +127,11 @@ const handleAvatarSuccess = (res) => {
 
 const submitForm = async (formEl) => {
     if (!formEl) return
-    
+
     await formEl.validate(async (valid) => {
         if (valid) {
-            const res = await API.addCommodity(form.value)
-            if(res.code === 0) {
+            const res = await API.addOrUpdateProperty({}, form.value)
+            if (res.errcode === 0) {
                 ElMessage.success(isEdit.value ? '修改成功' : '添加成功')
                 goBack()
             }
@@ -127,13 +142,14 @@ const submitForm = async (formEl) => {
 onMounted(async () => {
     const { pcode } = route.query
     if (pcode) {
-        form.value.pcode = pcode;
+        form.value.pcode = pcode
         isEdit.value = true
         // 这里可以调用获取商品详情的接口
         const res = await API.getDetaInfo({ code: pcode })
         console.log(res)
-        if(res.code === 0) {
-            form.value = {...form.value, ...res.data}
+        if (res.errcode === 0) {
+            form.value = { ...form.value, ...res.data }
+            form.value.banner = res.data.bannerList || []
         }
     }
 })
@@ -143,14 +159,21 @@ onMounted(async () => {
 .edit-page {
     padding: 15px;
     background-color: #ffffff;
+
     .header {
         margin-bottom: 30px;
     }
-    
+
     .form-container {
         max-width: 800px;
     }
-    
+
+    .banner-item {
+        :deep(.el-form-item__content) {
+            line-height: normal;
+        }
+    }
+
     .avatar-uploader {
         :deep(.el-upload) {
             border: 1px dashed #d9d9d9;
@@ -159,13 +182,16 @@ onMounted(async () => {
             position: relative;
             overflow: hidden;
             transition: var(--el-transition-duration-fast);
-            
+
             &:hover {
                 border-color: var(--el-color-primary);
             }
         }
+        :deep(.avatar-uploader) {
+            margin-right: 10px;
+        }
     }
-    
+
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
@@ -174,7 +200,7 @@ onMounted(async () => {
         text-align: center;
         line-height: 120px;
     }
-    
+
     .avatar {
         width: 120px;
         height: 120px;

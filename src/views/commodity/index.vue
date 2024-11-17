@@ -83,7 +83,7 @@ const getProductList = async () => {
     const res = await API.getProductList(searchForm.value);
     const data = res.data || {};    
     tableData.value = data.list || [];
-    tableData.value = [{name: '商品1', pcode: "P180100922", price: 99}]
+    tableData.value = [{name: '品1', pcode: "P180100922", price: 99}]
     total.value = data.total || 0;
     console.log(res)
 }
