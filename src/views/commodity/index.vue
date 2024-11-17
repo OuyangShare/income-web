@@ -80,10 +80,9 @@ const handleSearch = () => {
 }
 
 const getProductList = async () => {
-    const res = await API.getProductList(searchForm.value);
+    const res = await API.getProductList({},searchForm.value);
     const data = res.data || {};    
     tableData.value = data.list || [];
-    tableData.value = [{name: '品1', pcode: "P180100922", price: 99}]
     total.value = data.total || 0;
     console.log(res)
 }
@@ -92,7 +91,7 @@ onMounted(() => {
     getProductList()
 })
 
-const handleAdd = (row) => {
+const handleAdd = () => {
     router.push({
         path: '/commodity/add'
     })
