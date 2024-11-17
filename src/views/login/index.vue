@@ -7,8 +7,8 @@
                 </div>
                 <div class="form-box">
                     <div class="ipt-box">
-                        <el-input 
-                            v-model="formData.name"
+                        <el-input
+                            v-model="formData.username"
                             placeholder="请输入用户账号"
                             :prefix-icon="User"
                             size="large"
@@ -16,7 +16,7 @@
                     </div>
                     <div class="ipt-box">
                         <el-input
-                            v-model="formData.passWord"
+                            v-model="formData.pwd"
                             :type="passwordShow ? 'text' : 'password'"
                             placeholder="请输入登录密码"
                             size="large"
@@ -37,31 +37,39 @@
         </div>
     </div>
 </template>
-  
+
 <script lang="js" setup>
-import { ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import { useRouter } from 'vue-router';
-import { Lock, User, Hide, View } from '@element-plus/icons-vue';
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+import { Lock, User, Hide, View } from '@element-plus/icons-vue'
+import API from '@/common/request'
+
 const router = useRouter()
 const formData = ref({
-    name: 'admin',
-    passWord: '123456',
+    username: 'admin',
+    pwd: '111111'
 })
-const passwordShow = ref(false);
-const submitLogin = () => {
-    if(!formData.value.name || !formData.value.passWord) {
-        ElMessage.error('请输入用户账号和密码');
+const passwordShow = ref(false)
+
+const submitLogin = async () => {
+    if (!formData.value.username || !formData.value.pwd) {
+        ElMessage.error('请输入用户账号和密码')
         return
     } else {
-        ElMessage.success('登录成功');
-        setTimeout(() => {
-            router.push('/web/commodity');
-        }, 1500);
+        const res = await API.login({}, formData.value)
+        if (res.errcode === 0) {
+            ElMessage.success('登录成功')
+            setTimeout(() => {
+                router.push('/web/commodity')
+            }, 1500)
+        } else {
+            ElMessage.error(res.errmsg || '登录失败')
+        }
     }
 }
 </script>
-  
+
 <style lang="scss" scoped>
 .login-page {
     max-height: 100vh;
