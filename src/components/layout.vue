@@ -23,6 +23,11 @@
                     <el-icon><Goods /></el-icon>
                     <span>商品管理</span>
                 </el-menu-item>
+
+                <el-menu-item v-if="userInfo.isadmin" index="/user">
+                    <el-icon><User /></el-icon>
+                    <span>用户管理</span>
+                </el-menu-item>
             </el-menu>
         </el-aside>
         
@@ -42,7 +47,7 @@
                 <div class="header-right">
                     <el-dropdown>
                         <span class="user-info">
-                            管理员 <el-icon><ArrowDown /></el-icon>
+                            {{ userInfo.username || '未知人员' }} <el-icon><ArrowDown /></el-icon>
                         </span>
                         <template #dropdown>
                             <el-dropdown-menu>
@@ -63,11 +68,15 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { House, Goods, Fold, Expand, ArrowDown } from '@element-plus/icons-vue'
+import { House, Goods, Fold, Expand, ArrowDown, User } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
 const isCollapse = ref(false)
+
+const userInfo = computed(() => {
+    return JSON.parse(localStorage.getItem('userInfo') || '{}')
+})
 
 const breadcrumbList = computed(() => {
     const matched = route.matched
@@ -86,7 +95,9 @@ const breadcrumbList = computed(() => {
 })
 
 const handleLogout = () => {
-    router.push('/web/login')
+    localStorage.removeItem('token')
+    localStorage.removeItem('userInfo')
+    router.push('/login')
 }
 </script>
 

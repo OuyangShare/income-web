@@ -27,4 +27,18 @@ export class API {
     static async addProduct(params, data) {
         return request(public_url + '/product/add', params, data, 'post')
     }
+
+
+    // 用户列表
+    static async getUserList(params, data) {
+        return request(public_url + '/user/selectList', params, data, 'post')
+    }
+    // 新增用户
+    static async addUser(params, data) {
+        return request(public_url + '/user/addUser ', params, data, 'post')
+    }
+    // 编辑用户
+    static async editUser(params, data) {
+        return request(public_url + '/user/updateUser', params, data, 'post')
+    }
 }

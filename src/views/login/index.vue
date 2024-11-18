@@ -60,6 +60,8 @@ const submitLogin = async () => {
         const res = await API.login({}, formData.value)
         if (res.errcode === 0) {
             ElMessage.success('登录成功')
+            localStorage.setItem('token', res.data.token)
+            localStorage.setItem('userInfo', JSON.stringify(res.data))
             setTimeout(() => {
                 router.push('/web/commodity')
             }, 1500)

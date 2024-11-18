@@ -47,7 +47,7 @@ const router = useRouter()
 
 const searchForm = ref({
     name: '',
-    pcode: '',
+    pcode: 'P194117256',
     page: 1,
     pageSize: 10,
 })
@@ -129,7 +129,7 @@ const handleEditDetail = (row) => {
 <style lang="scss" scoped>
 .commodity-page {
     padding: 20px;
-    
+    background-color: #fff;
     .header {
         margin-bottom: 20px;
     }
