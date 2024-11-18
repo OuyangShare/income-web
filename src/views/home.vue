@@ -4,6 +4,7 @@
             <h1>欢迎使用后台管理系统</h1>
             <p>当前时间: {{ currentTime }}</p>
         </div>
+        <img src="@/assets/bg.jpg" class="bg-img" alt="">
     </div>
 </template>
 
@@ -26,6 +27,8 @@ onUnmounted(() => {
 
     .welcome-section {
         margin-bottom: 30px;
+        // text-align: center;
+
         h1 {
             font-size: 24px;
             color: #303133;
@@ -34,6 +37,12 @@ onUnmounted(() => {
         p {
             color: #909399;
         }
+    }
+
+    .bg-img {
+        width: 900px;
+        height: auto;
+        margin-bottom: 20px;
     }
 }
 </style>

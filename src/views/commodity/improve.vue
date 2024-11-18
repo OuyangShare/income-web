@@ -20,9 +20,9 @@
                 <template v-if="form.testReport.length > 0">
                     <div v-for="(item, index) in form.testReport" :key="index" class="image-item">
                         <el-image 
-                            :src="item" 
+                            :src="item.origincertify" 
                             class="avatar"
-                            :preview-src-list="[item]"
+                            :preview-src-list="[item.origincertify]"
                             fit="cover"
                         />
                         <div class="image-actions">
@@ -43,13 +43,12 @@
                 </el-upload>
             </el-form-item>
 
-            <el-form-item label="使用说明" prop="instructions">
-                <el-input
-                    v-model="form.instructions"
-                    type="textarea"
-                    :rows="4"
-                    placeholder="请输入使用说明"
-                />
+            <el-form-item label="证书名称" prop="caname">
+                <el-input v-model="form.caname" placeholder="请输入证书名称"/>
+            </el-form-item>
+
+            <el-form-item label="证书编号" prop="caimage">
+                <el-input v-model="form.caimage" placeholder="请输入证书编号"/>
             </el-form-item>
 
             <el-form-item label="经销商" prop="dealer">
@@ -106,7 +105,8 @@ const form = ref({
     name: '',
     supplier: '',
     testReport: [],
-    instructions: '',
+    caname: '',
+    caimage: '',
     dealer: '',
     manufacturer: '',
     logistics: '',
@@ -128,7 +128,14 @@ const uploadFile = async (file) => {
     const res = await API.uploadImage({}, {file: file.file})
     if (res.errcode === 0) {
         const url = res.data;
-        form.value.testReport.push(url)
+        form.value.testReport.push({
+            pcode: form.value.pcode,
+            producername: form.value.supplier,
+            originnodename: '',
+            origincertify: url,
+            caname: form.value.caname,
+            caimage: form.value.caimage
+        })
     }    
 }
 
@@ -137,7 +144,24 @@ const submitForm = async (formEl) => {
     
     await formEl.validate(async (valid) => {
         if (valid) {
-            const res = await API.addOrUpdateProperty({}, form.value)
+            const params = {
+                pcode: form.value.pcode,
+                internetProduction: form.value.testReport,
+                customs: [{
+                    id: originObj.value?.customs?.[0]?.id || 0,
+                    pcode: form.value.pcode,
+                    cuscode: form.value.companyProfile
+                }],
+                logisticsinfos: [{
+                    id: originObj.value?.logisticsinfos?.[0]?.id || 0,
+                    pcode: form.value.pcode,
+                    dealername: form.value.dealer,
+                    cusname: form.value.manufacturer,
+                    logisticsname: form.value.logistics
+                }]
+            }
+            
+            const res = await API.addOrUpdateProperty({}, params)
             if(res.code === 0) {
                 ElMessage.success('保存成功')
                 goBack()
@@ -160,7 +184,9 @@ onMounted(async () => {
             originObj.value = data;
             form.value = {...form.value, ...data}
             form.value.supplier = data.internetProduction?.[0]?.producername || ''
-            form.value.testReport = Array.from(data.internetProduction, x=>x.origincertify);
+            form.value.testReport = data.internetProduction || [];
+            form.value.caname = data.internetProduction?.[0]?.caname || '';
+            form.value.caimage = data.internetProduction?.[0]?.caimage || '';
             form.value.dealer = data?.logisticsinfos?.[0]?.dealername || '';
             form.value.manufacturer = data?.logisticsinfos?.[0]?.cusname || '';
             form.value.logistics = data?.logisticsinfos?.[0]?.logisticsname || '';
