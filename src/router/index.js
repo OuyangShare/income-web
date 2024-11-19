@@ -31,7 +31,6 @@ router.beforeEach((to, from, next) => {
   const userInfo = JSON.parse(localStorage.getItem('userInfo') || '{}')
   console.log(userInfo);
   
-  // 如果路径包含/web,则重定向到去掉/web的路径
   if (to.path.startsWith('/web')) {
     next(to.path.replace('/web', ''))
     return

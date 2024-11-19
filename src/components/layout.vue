@@ -19,7 +19,7 @@
                     <span>首页</span>
                 </el-menu-item>
                 
-                <el-menu-item index="/web/commodity">
+                <el-menu-item index="/commodity">
                     <el-icon><Goods /></el-icon>
                     <span>商品管理</span>
                 </el-menu-item>

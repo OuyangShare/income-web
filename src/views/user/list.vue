@@ -2,8 +2,8 @@
     <div class="user-page">
         <div class="header">
             <div class="search-area">
-                <el-input v-model="searchForm.username" placeholder="请输入用户名" style="width: 200px; margin-right: 10px;" />
-                <el-input v-model="searchForm.loginname" placeholder="请输入登录名" style="width: 200px; margin-right: 10px;" />
+                <el-input v-model="searchForm.name" placeholder="请输入用户名" style="width: 200px; margin-right: 10px;" />
+                <el-input v-model="searchForm.username" placeholder="请输入登录名" style="width: 200px; margin-right: 10px;" />
                 <el-button type="primary" @click="handleSearch">查询</el-button>
                 <el-button @click="resetSearch">重置</el-button>
             </div>
@@ -23,9 +23,9 @@
 
         <el-table border :data="tableData" style="width: 100%">
             <el-table-column prop="id" label="用户ID" />
-            <el-table-column prop="username" label="用户名" />
-            <el-table-column prop="loginname" label="登录名" />
-            <el-table-column prop="createTime" label="创建时间" />
+            <el-table-column prop="name" label="用户名" />
+            <el-table-column prop="username" label="登录名" />
+            <el-table-column prop="createtime" label="创建时间" />
             <el-table-column label="操作" align="center">
                 <template #default="scope">
                     <el-button size="small" type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
@@ -57,11 +57,11 @@
                 :rules="rules"
                 label-width="80px"
             >
-                <el-form-item label="用户名" prop="username">
-                    <el-input v-model="userForm.username" placeholder="请输入用户名" />
+                <el-form-item label="用户名" prop="name">
+                    <el-input v-model="userForm.name" placeholder="请输入用户名" />
                 </el-form-item>
-                <el-form-item label="登录名" prop="loginname">
-                    <el-input v-model="userForm.loginname" placeholder="请输入登录名" />
+                <el-form-item label="登录名" prop="username">
+                    <el-input v-model="userForm.username" placeholder="请输入登录名" />
                 </el-form-item>
                 <el-form-item label="密码" prop="pwd" v-if="dialogType === 'add'">
                     <el-input v-model="userForm.pwd" type="password" placeholder="请输入密码" />
@@ -81,12 +81,11 @@
 import { ref, onMounted } from 'vue'
 import { API } from '@/common/api'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import * as XLSX from 'xlsx'
 
 const formRef = ref(null)
 const searchForm = ref({
-    username: '',
-    loginname: '', 
+    name: '',
+    username: '', 
     page: 1,
     pageSize: 10
 })
@@ -97,7 +96,7 @@ const dialogVisible = ref(false)
 const dialogType = ref('add')
 const userForm = ref({
     username: '',
-    loginname: '',
+    name: '',
     pwd: ''
 })
 
@@ -120,7 +119,7 @@ const handleCurrentChange = (val) => {
 const resetSearch = () => {
     searchForm.value = {
         username: '',
-        loginname: '',
+        name: '',
         page: 1,
         pageSize: 10
     }
@@ -143,7 +142,7 @@ const handleAdd = () => {
     dialogType.value = 'add'
     userForm.value = {
         username: '',
-        loginname: '',
+        name: '',
         pwd: ''
     }
     dialogVisible.value = true
@@ -154,7 +153,7 @@ const handleEdit = (row) => {
     userForm.value = {
         id: row.id,
         username: row.username,
-        loginname: row.loginname
+        name: row.name
     }
     dialogVisible.value = true
 }
@@ -187,7 +186,7 @@ const handleDelete = (row) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(async () => {
-        const res = await API.deleteUser({ id: row.id })
+        const res = await API.editUser({}, { id: row.id, status: 1, name: row.name, username: row.username })
         if (res.errcode === 0) {
             ElMessage.success('删除成功')
             getUserList()
@@ -221,32 +220,32 @@ const handleExport = async () => {
 
 // 导入Excel
 const handleImport = (file) => {
-    const reader = new FileReader()
-    reader.onload = async (e) => {
-        const data = e.target.result
-        const workbook = XLSX.read(data, { type: 'array' })
-        const firstSheetName = workbook.SheetNames[0]
-        const worksheet = workbook.Sheets[firstSheetName]
-        const results = XLSX.utils.sheet_to_json(worksheet)
+    // const reader = new FileReader()
+    // reader.onload = async (e) => {
+    //     const data = e.target.result
+    //     const workbook = XLSX.read(data, { type: 'array' })
+    //     const firstSheetName = workbook.SheetNames[0]
+    //     const worksheet = workbook.Sheets[firstSheetName]
+    //     const results = XLSX.utils.sheet_to_json(worksheet)
         
-        // 处理导入数据
-        try {
-            for (let item of results) {
-                const params = {
-                    username: item['用户名'],
-                    loginname: item['登录名'],
-                    pwd: '123456' // 默认密码
-                }
-                await API.addUser({}, params)
-            }
-            ElMessage.success('导入成功')
-            getUserList()
-        } catch (error) {
-            ElMessage.error('导入失败')
-        }
-    }
-    reader.readAsArrayBuffer(file)
-    return false
+    //     // 处理导入数据
+    //     try {
+    //         for (let item of results) {
+    //             const params = {
+    //                 username: item['用户名'],
+    //                 loginname: item['登录名'],
+    //                 pwd: '123456' // 默认密码
+    //             }
+    //             await API.addUser({}, params)
+    //         }
+    //         ElMessage.success('导入成功')
+    //         getUserList()
+    //     } catch (error) {
+    //         ElMessage.error('导入失败')
+    //     }
+    // }
+    // reader.readAsArrayBuffer(file)
+    // return false
 }
 
 onMounted(() => {

@@ -63,7 +63,7 @@ const submitLogin = async () => {
             localStorage.setItem('token', res.data.token)
             localStorage.setItem('userInfo', JSON.stringify(res.data))
             setTimeout(() => {
-                router.push('/web/commodity')
+                router.push('/commodity')
             }, 1500)
         } else {
             ElMessage.error(res.errmsg || '登录失败')
