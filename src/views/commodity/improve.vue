@@ -162,7 +162,7 @@ const submitForm = async (formEl) => {
             }
             
             const res = await API.addOrUpdateProperty({}, params)
-            if(res.code === 0) {
+            if(res.errcode === 0) {
                 ElMessage.success('保存成功')
                 goBack()
             } else {
