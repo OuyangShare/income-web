@@ -1,6 +1,6 @@
 import { request, uploadRequest } from './request'
 
-const public_url = ''
+const public_url = '/api'
 
 export class API {
     // /user/login   {"username":"admin","pwd":"111111"}

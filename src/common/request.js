@@ -5,7 +5,7 @@ import router from '@/router';
 
 // axios.defaults.baseURL = 'http://8.153.68.28:8090';
 // axios.defaults.baseURL = 'http://127.0.0.1:8090';
-axios.defaults.baseURL = process.env.VUE_APP_BASE_URL;
+axios.defaults.baseURL = "";
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
