@@ -61,7 +61,7 @@
                     <el-input v-model="userForm.name" placeholder="请输入用户名" />
                 </el-form-item>
                 <el-form-item label="登录名" prop="username">
-                    <el-input v-model="userForm.username" placeholder="请输入登录名" />
+                    <el-input disabled="dialogType === 'edit'" v-model="userForm.username" placeholder="请输入登录名" />
                 </el-form-item>
                 <el-form-item label="密码" prop="pwd" v-if="dialogType === 'add'">
                     <el-input v-model="userForm.pwd" type="password" placeholder="请输入密码" />
