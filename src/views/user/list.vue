@@ -187,58 +187,6 @@ const handleDelete = (row) => {
     })
 }
 
-// 导出Excel
-const handleExport = async () => {
-    try {
-        const res = await API.exportUserList({}, searchForm.value)
-        if(res.errcode === 0) {
-            // 假设接口返回的是文件流
-            const blob = new Blob([res.data], { type: 'application/vnd.ms-excel' })
-            const url = window.URL.createObjectURL(blob)
-            const link = document.createElement('a')
-            link.href = url
-            link.download = '用户列表.xlsx'
-            link.click()
-            window.URL.revokeObjectURL(url)
-            ElMessage.success('导出成功')
-        } else {
-            ElMessage.error(res.errmsg || '导出失败')
-        }
-    } catch (error) {
-        ElMessage.error('导出失败')
-    }
-}
-
-// 导入Excel
-const handleImport = (file) => {
-    // const reader = new FileReader()
-    // reader.onload = async (e) => {
-    //     const data = e.target.result
-    //     const workbook = XLSX.read(data, { type: 'array' })
-    //     const firstSheetName = workbook.SheetNames[0]
-    //     const worksheet = workbook.Sheets[firstSheetName]
-    //     const results = XLSX.utils.sheet_to_json(worksheet)
-        
-    //     // 处理导入数据
-    //     try {
-    //         for (let item of results) {
-    //             const params = {
-    //                 username: item['用户名'],
-    //                 loginname: item['登录名'],
-    //                 pwd: '123456' // 默认密码
-    //             }
-    //             await API.addUser({}, params)
-    //         }
-    //         ElMessage.success('导入成功')
-    //         getUserList()
-    //     } catch (error) {
-    //         ElMessage.error('导入失败')
-    //     }
-    // }
-    // reader.readAsArrayBuffer(file)
-    // return false
-}
-
 onMounted(() => {
     getUserList()
 })

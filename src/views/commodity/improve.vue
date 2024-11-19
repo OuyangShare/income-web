@@ -12,6 +12,27 @@
             <el-form-item label="商品名称">
                 {{ form.name }}
             </el-form-item>
+            <el-form-item label="使用步骤" class="step-container">
+                <el-form-item label="步骤名" label-width="70px">
+                    <el-input v-model="form.inspectionorgname" placeholder="请输入步骤名称"/>
+                </el-form-item>
+                <div class="steps-list">
+                    <div v-for="(step, stepIndex) in form.useSteps" :key="stepIndex" class="step-item">
+                        <div class="step-content">
+                            <div class="step-number">{{ stepIndex + 1 }}</div>
+                            <el-form-item label="步骤描述" class="step-desc">
+                                <el-input v-model="step.inspectiondate" placeholder="请输入步骤描述"/>
+                                <el-button type="danger" link class="delete-btn" @click="removeStepDesc(stepIndex)">
+                                    <el-icon><Delete /></el-icon>
+                                </el-button>
+                            </el-form-item>
+                        </div>
+                    </div>
+                </div>
+                <el-button type="primary" class="add-step-btn" @click="addStepDesc">
+                    <el-icon><Plus /></el-icon>添加步骤描述
+                </el-button>
+            </el-form-item>
 
             <el-form-item label="供应商">
                 <el-input v-model="form.supplier" />
@@ -111,6 +132,8 @@ const form = ref({
     manufacturer: '',
     logistics: '',
     companyProfile: '',
+    inspectionorgname: '',
+    useSteps: []
 })
 
 const rules = {
@@ -120,6 +143,25 @@ const rules = {
     'testReport.*.caimage': [
         { required: true, message: '请输入报告编号', trigger: 'blur' }
     ]
+}
+
+const addStepDesc = () => {
+    form.value.useSteps.push({
+        id: 0,
+        pcode: form.value.pcode,
+        inspectiondate: '',
+        inspectionorgname: form.value.inspectionorgname,
+        inspectioncode: '',
+        sort: form.value.useSteps.length + 1,
+    })
+}
+
+const removeStepDesc = (index) => {
+    form.value.useSteps.splice(index, 1)
+    // 重新排序
+    form.value.useSteps.forEach((step, idx) => {
+        step.sort = idx + 1
+    })
 }
 
 const goBack = () => {
@@ -172,9 +214,16 @@ const submitForm = async (formEl) => {
                     dealername: form.value.dealer,
                     cusname: form.value.manufacturer,
                     logisticsname: form.value.logistics
-                }]
+                }],
+                overseastests: form.value.useSteps.map(step => ({
+                    id: step.id || 0,
+                    pcode: form.value.pcode,
+                    inspectiondate: step.inspectiondate,
+                    inspectionorgname: form.value.inspectionorgname,
+                    inspectioncode: step.inspectioncode,
+                    sort: step.sort
+                }))
             }
-            
             const res = await API.addOrUpdateProperty({}, params)
             if(res.errcode === 0) {
                 ElMessage.success('保存成功')
@@ -203,6 +252,11 @@ onMounted(async () => {
             form.value.manufacturer = data?.logisticsinfos?.[0]?.cusname || '';
             form.value.logistics = data?.logisticsinfos?.[0]?.logisticsname || '';
             form.value.companyProfile = data?.customs?.[0]?.cuscode || '';
+            form.value.inspectionorgname = data?.overseastests?.[0]?.inspectionorgname || '';
+            form.value.useSteps = data?.overseastests?.map(step => ({
+                ...step,
+                descriptions: []
+            })) || [];
         }
     }
 })
@@ -219,6 +273,53 @@ onMounted(async () => {
     
     .form-container {
         max-width: 800px;
+    }
+
+    .step-container {
+        .steps-list {
+            margin: 20px 0;
+        }
+
+        .step-item {
+            margin-bottom: 15px;
+            
+            .step-content {
+                display: flex;
+                align-items: center;
+                background: #f5f7fa;
+                padding: 15px;
+                border-radius: 4px;
+
+                .step-number {
+                    width: 24px;
+                    height: 24px;
+                    line-height: 24px;
+                    text-align: center;
+                    background: var(--el-color-primary);
+                    color: white;
+                    border-radius: 50%;
+                    margin-right: 15px;
+                }
+
+                .step-desc {
+                    flex: 1;
+                    margin: 0;
+
+                    :deep(.el-form-item__content) {
+                        display: flex;
+                        gap: 10px;
+                    }
+                }
+
+                .delete-btn {
+                    color: var(--el-color-danger);
+                }
+            }
+        }
+
+        .add-step-btn {
+            margin-left: 10px;
+        }
     }
 
     .test-report-container {
