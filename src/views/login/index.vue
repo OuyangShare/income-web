@@ -47,8 +47,8 @@ import { API } from '@/common/api'
 
 const router = useRouter()
 const formData = ref({
-    username: 'admin',
-    pwd: '111111'
+    username: '',
+    pwd: ''
 })
 const passwordShow = ref(false)
 

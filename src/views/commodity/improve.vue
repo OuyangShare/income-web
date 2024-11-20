@@ -19,10 +19,9 @@
                 <div class="steps-list">
                     <div v-for="(step, stepIndex) in form.useSteps" :key="stepIndex" class="step-item">
                         <div class="step-content">
-                            <div class="step-number">{{ stepIndex + 1 }}</div>
-                            <el-form-item label="步骤描述" class="step-desc">
-                                <el-input v-model="step.inspectiondate" placeholder="请输入步骤描述"/>
-                                <el-button type="danger" link class="delete-btn" @click="removeStepDesc(stepIndex)">
+                            <el-form-item label-width="40px" :label="`(${stepIndex + 1})`" class="step-desc">
+                                <el-input style="width: 80%;" v-model="step.inspectiondate" placeholder="请输入步骤描述"/>
+                                <el-button style="display: block;" type="danger" link class="delete-btn" @click="removeStepDesc(stepIndex)">
                                     <el-icon><Delete /></el-icon>
                                 </el-button>
                             </el-form-item>
@@ -194,8 +193,8 @@ const submitForm = async (formEl) => {
         if (valid) {
             const params = {
                 pcode: form.value.pcode,
-                internetProduction: form.value.testReport.map(item => ({
-                    id: originObj.value?.internetProduction?.[0]?.id || 0,
+                internetProduction: form.value.testReport.map((item, index) => ({
+                    id: originObj.value?.internetProduction?.[index]?.id || 0,
                     pcode: form.value.pcode,
                     producername: form.value.supplier,
                     originnodename: '',
@@ -289,20 +288,8 @@ onMounted(async () => {
                 background: #f5f7fa;
                 padding: 15px;
                 border-radius: 4px;
-
-                .step-number {
-                    width: 24px;
-                    height: 24px;
-                    line-height: 24px;
-                    text-align: center;
-                    background: var(--el-color-primary);
-                    color: white;
-                    border-radius: 50%;
-                    margin-right: 15px;
-                }
-
                 .step-desc {
-                    flex: 1;
+                    display: flex;
                     margin: 0;
 
                     :deep(.el-form-item__content) {

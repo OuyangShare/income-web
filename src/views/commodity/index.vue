@@ -47,7 +47,7 @@ const router = useRouter()
 
 const searchForm = ref({
     name: '',
-    pcode: 'P194117256',
+    pcode: '',
     page: 1,
     pageSize: 10,
 })
