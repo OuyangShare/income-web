@@ -121,7 +121,7 @@
                     </div>
                 </template>
                 <el-upload
-                    v-if="form.testReport.length < 2"
+                    v-if="form.testReport.filter(item => item.origincertify) < 2"
                     class="avatar-uploader"
                     action="#"
                     :show-file-list="false"
