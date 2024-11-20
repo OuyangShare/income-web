@@ -4,7 +4,13 @@
             <el-page-header @back="goBack" title="完善商品信息" />
         </div>
         
-        <el-form ref="formRef" :model="form" :rules="rules" label-width="120px" class="form-container">
+        <el-form 
+            ref="formRef" 
+            :model="form" 
+            :rules="rules" 
+            label-width="120px" 
+            class="form-container"
+        >
             <el-form-item label="商品编号">
                 {{ form.pcode }}
             </el-form-item>
@@ -12,33 +18,66 @@
             <el-form-item label="商品名称">
                 {{ form.name }}
             </el-form-item>
+
             <el-form-item label="使用步骤" class="step-container">
                 <el-form-item label="步骤名" label-width="70px">
-                    <el-input v-model="form.inspectionorgname" placeholder="请输入步骤名称"/>
+                    <el-input 
+                        v-model="form.inspectionorgname"
+                        placeholder="请输入步骤名称"
+                    />
                 </el-form-item>
-                <div class="steps-list">
-                    <div v-for="(step, stepIndex) in form.useSteps" :key="stepIndex" class="step-item">
-                        <div class="step-content">
-                            <el-form-item label-width="40px" :label="`(${stepIndex + 1})`" class="step-desc">
-                                <el-input style="width: 80%;" v-model="step.inspectiondate" placeholder="请输入步骤描述"/>
-                                <el-button style="display: block;" type="danger" link class="delete-btn" @click="removeStepDesc(stepIndex)">
-                                    <el-icon><Delete /></el-icon>
-                                </el-button>
-                            </el-form-item>
-                        </div>
+            </el-form-item>
+    
+            <div class="steps-list">
+                <div 
+                    v-for="(step, stepIndex) in form.useSteps" 
+                    :key="stepIndex" 
+                    class="step-item"
+                >
+                    <div class="step-content">
+                        ({{ stepIndex + 1 }})
+                            <el-input
+                                style="width: 80%;"
+                                :row="1"
+                                type="textarea"
+                                v-model="step.inspectiondate"
+                                placeholder="请输入步骤描述"
+                            />
+                            <el-button
+                                style="display: block;"
+                                type="danger"
+                                link
+                                class="delete-btn"
+                                @click="removeStepDesc(stepIndex)"
+                            >
+                                <el-icon><Delete /></el-icon>
+                            </el-button>
                     </div>
                 </div>
-                <el-button type="primary" class="add-step-btn" @click="addStepDesc">
+                <el-button 
+                    type="primary" 
+                    class="add-step-btn" 
+                    @click="addStepDesc"
+                >
                     <el-icon><Plus /></el-icon>添加步骤描述
                 </el-button>
-            </el-form-item>
+            </div>
 
             <el-form-item label="供应商">
                 <el-input v-model="form.supplier" />
             </el-form-item>
-            <el-form-item label="检测报告" prop="testReport" class="test-report-container">
+
+            <el-form-item 
+                label="检测报告" 
+                prop="testReport" 
+                class="test-report-container"
+            >
                 <template v-if="form.testReport.length > 0">
-                    <div v-for="(item, index) in form.testReport.filter(item => item.origincertify)" :key="index" class="report-item">
+                    <div 
+                        v-for="(item, index) in form.testReport.filter(item => item.origincertify)" 
+                        :key="index" 
+                        class="report-item"
+                    >
                         <div class="image-item">
                             <el-image 
                                 :src="item.origincertify" 
@@ -47,17 +86,36 @@
                                 fit="contain"
                             />
                             <div class="image-actions">
-                                <el-button type="danger" link @click="handleRemoveImage(index)">
+                                <el-button 
+                                    type="danger" 
+                                    link 
+                                    @click="handleRemoveImage(index)"
+                                >
                                     <el-icon><Delete /></el-icon>
                                 </el-button>
                             </div>
                         </div>
                         <div class="report-info">
-                            <el-form-item :style="{ marginBottom: '10px' }" label="报告名称" label-width="70px" :prop="'testReport.' + index + '.caname'">
-                                <el-input v-model="item.caname" placeholder="请输入报告名称"/>
+                            <el-form-item 
+                                :style="{ marginBottom: '10px' }" 
+                                label="报告名称" 
+                                label-width="70px" 
+                                :prop="'testReport.' + index + '.caname'"
+                            >
+                                <el-input 
+                                    v-model="item.caname" 
+                                    placeholder="请输入报告名称"
+                                />
                             </el-form-item>
-                            <el-form-item label="报告编号" label-width="70px"  :prop="'testReport.' + index + '.caimage'">
-                                <el-input v-model="item.caimage" placeholder="请输入报告编号"/>
+                            <el-form-item 
+                                label="报告编号" 
+                                label-width="70px"  
+                                :prop="'testReport.' + index + '.caimage'"
+                            >
+                                <el-input 
+                                    v-model="item.caimage" 
+                                    placeholder="请输入报告编号"
+                                />
                             </el-form-item>
                         </div>
                     </div>
@@ -174,7 +232,7 @@ const handleRemoveImage = (index) => {
 const uploadFile = async (file) => {
     const res = await API.uploadImage({}, {file: file.file})
     if (res.errcode === 0) {
-        const url = res.data;
+        const url = res.data
         form.value.testReport.push({
             pcode: form.value.pcode,
             producername: form.value.supplier,
@@ -234,7 +292,7 @@ const submitForm = async (formEl) => {
     })
 }
 
-const originObj = ref({});
+const originObj = ref({})
 
 onMounted(async () => {
     const { pcode } = route.query
@@ -242,20 +300,20 @@ onMounted(async () => {
         form.value.pcode = pcode
         const res = await API.getDetaInfo({ code: pcode })
         if(res.errcode === 0) {
-            const data = res.data || {};
-            originObj.value = data;
-            form.value = {...form.value, ...data};
-            form.value.supplier = data.internetProduction?.[0]?.producername || '';
-            form.value.testReport = data.internetProduction || [];
-            form.value.dealer = data?.logisticsinfos?.[0]?.dealername || '';
-            form.value.manufacturer = data?.logisticsinfos?.[0]?.cusname || '';
-            form.value.logistics = data?.logisticsinfos?.[0]?.logisticsname || '';
-            form.value.companyProfile = data?.customs?.[0]?.cuscode || '';
-            form.value.inspectionorgname = data?.overseastests?.[0]?.inspectionorgname || '';
+            const data = res.data || {}
+            originObj.value = data
+            form.value = {...form.value, ...data}
+            form.value.supplier = data.internetProduction?.[0]?.producername || ''
+            form.value.testReport = data.internetProduction || []
+            form.value.dealer = data?.logisticsinfos?.[0]?.dealername || ''
+            form.value.manufacturer = data?.logisticsinfos?.[0]?.cusname || ''
+            form.value.logistics = data?.logisticsinfos?.[0]?.logisticsname || ''
+            form.value.companyProfile = data?.customs?.[0]?.cuscode || ''
+            form.value.inspectionorgname = data?.overseastests?.[0]?.inspectionorgname || ''
             form.value.useSteps = data?.overseastests?.map(step => ({
                 ...step,
                 descriptions: []
-            })) || [];
+            })) || []
         }
     }
 })
@@ -273,40 +331,38 @@ onMounted(async () => {
     .form-container {
         max-width: 800px;
     }
+    
+    .steps-list {
+        margin: 18px 0;
+        padding-left: 120px;
+    }
 
-    .step-container {
-        .steps-list {
-            margin: 20px 0;
-        }
-
-        .step-item {
+    .step-item {
+        .step-content {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding: 0 15px;
             margin-bottom: 15px;
-            
-            .step-content {
+            border-radius: 4px;
+            .step-desc {
                 display: flex;
-                align-items: center;
-                background: #f5f7fa;
-                padding: 15px;
-                border-radius: 4px;
-                .step-desc {
+                margin: 0;
+
+                :deep(.el-form-item__content) {
                     display: flex;
-                    margin: 0;
-
-                    :deep(.el-form-item__content) {
-                        display: flex;
-                        gap: 10px;
-                    }
-                }
-
-                .delete-btn {
-                    color: var(--el-color-danger);
+                    gap: 10px;
                 }
             }
-        }
 
-        .add-step-btn {
-            margin-left: 10px;
+            .delete-btn {
+                color: var(--el-color-danger);
+            }
         }
+    }
+
+    .add-step-btn {
+        margin-left: 10px;
     }
 
     .test-report-container {
@@ -382,6 +438,5 @@ onMounted(async () => {
         height: 120px;
         display: block;
     }
-
 }
 </style>
