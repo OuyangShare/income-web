@@ -47,7 +47,7 @@
                 <div class="header-right">
                     <el-dropdown>
                         <span class="user-info">
-                            {{ userInfo.username || '未知人员' }} <el-icon><ArrowDown /></el-icon>
+                            {{ userInfo.name || '未知人员' }} <el-icon><ArrowDown /></el-icon>
                         </span>
                         <template #dropdown>
                             <el-dropdown-menu>
