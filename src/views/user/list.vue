@@ -41,6 +41,7 @@
             :title="dialogType === 'add' ? '新增用户' : '编辑用户'"
             v-model="dialogVisible"
             width="500px"
+            @open="resetValidation"
         >
             <el-form
                 ref="formRef"
@@ -52,7 +53,7 @@
                     <el-input v-model="userForm.name" placeholder="请输入用户名" />
                 </el-form-item>
                 <el-form-item label="登录名" prop="username">
-                    <el-input disabled="dialogType === 'edit'" v-model="userForm.username" placeholder="请输入登录名" />
+                    <el-input :disabled="dialogType === 'edit'" v-model="userForm.username" placeholder="请输入登录名" />
                 </el-form-item>
                 <el-form-item label="密码" prop="pwd" v-if="dialogType === 'add'">
                     <el-input v-model="userForm.pwd" type="password" placeholder="请输入密码" />
@@ -92,9 +93,26 @@ const userForm = ref({
 })
 
 const rules = {
-    username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-    loginname: [{ required: true, message: '请输入登录名', trigger: 'blur' }],
-    pwd: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+    name: [
+        { required: true, message: '请输入用户名', trigger: 'blur' },
+        { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+    ],
+    username: [
+        { required: true, message: '请输入登录名', trigger: 'blur' },
+        { min: 4, max: 20, message: '长度在 4 到 20 个字符', trigger: 'blur' },
+        { pattern: /^[a-zA-Z0-9_]+$/, message: '只能包含字母、数字和下划线', trigger: 'blur' }
+    ],
+    pwd: [
+        { required: true, message: '请输入密码', trigger: 'blur' },
+        { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' },
+        { pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{6,20}$/, message: '密码必须包含大小写字母和数字', trigger: 'blur' }
+    ]
+}
+
+const resetValidation = () => {
+    if (formRef.value) {
+        formRef.value.clearValidate()
+    }
 }
 
 const handleSizeChange = (val) => {
