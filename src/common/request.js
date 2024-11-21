@@ -34,7 +34,7 @@ axios.interceptors.response.use((response) => {
     return response;
 }, (error) => {
     console.error('响应错误:', error.response);
-    if (error.response?.data?.code === 401) {
+    if (error.response.status === 401 || error.response?.data?.code === 401) {
         router.replace('/login');
     }
     return Promise.resolve({
