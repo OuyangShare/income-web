@@ -87,9 +87,16 @@ export function request(url = '', params = {}, data = {}, type = 'POST') {
 const uploadService = axios.create({
     timeout: 30000,
     headers: {
-        'Content-Type': 'multipart/form-data',
-        'token': localStorage.getItem('token') || ''
+        'Content-Type': 'multipart/form-data'
     }
+});
+
+// 添加请求拦截器实时获取token
+uploadService.interceptors.request.use(config => {
+    config.headers.token = localStorage.getItem('token') || '';
+    return config;
+}, error => {
+    return Promise.reject(error);
 });
 
 // 文件上传方法
