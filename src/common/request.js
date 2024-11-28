@@ -87,7 +87,8 @@ export function request(url = '', params = {}, data = {}, type = 'POST') {
 const uploadService = axios.create({
     timeout: 30000,
     headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
+        'token': localStorage.getItem('token') || ''
     }
 });
 
