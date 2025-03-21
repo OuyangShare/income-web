@@ -19,15 +19,17 @@
                     <span>首页</span>
                 </el-menu-item>
                 
+                <el-menu-item v-if="userInfo.isadmin" index="/user">
+                    <el-icon><User /></el-icon>
+                    <span>用户管理</span>
+                </el-menu-item>
+
                 <el-menu-item index="/commodity">
                     <el-icon><Goods /></el-icon>
                     <span>商品管理</span>
                 </el-menu-item>
 
-                <el-menu-item v-if="userInfo.isadmin" index="/user">
-                    <el-icon><User /></el-icon>
-                    <span>用户管理</span>
-                </el-menu-item>
+
             </el-menu>
         </el-aside>
         
